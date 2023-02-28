@@ -26,9 +26,22 @@ public class Program2 {
 
         problem.getRegions().get(0).setMinDist(0);
         Queue<Region> heap = new PriorityQueue<>(problem.getRegions());
+        
+        
 
         // TODO: implement this function
         int x = 4;
+        
+        for(Region u : problem.getRegions()) {
+        	
+        }
+        
+        while(!heap.isEmpty()) {
+        	Region u = heap.poll();
+        	
+        }
+        
+        
 
 
 
