@@ -23,21 +23,75 @@ public class Program2 {
      *  This function will not modify the mst_lists when run Gradescope if called in calculateDiameter()
      */
     public int findMinimumLength(Problem problem) {
-
+    //For each u ∈ G.V 
         problem.getRegions().get(0).setMinDist(0);
         Queue<Region> heap = new PriorityQueue<>(problem.getRegions());
-        
-        
 
         // TODO: implement this function
-        int x = 4;
         
-        for(Region u : problem.getRegions()) {
-        	
+//        for(Region u : problem.getRegions()) {
+//        	u.resetMinDist();
+//        	u.setIndex(0);
+//        	
+//        }
+//        
+//        Region r = heap.remove();
+//        r.setMinDist(0);
+//        heap.add(r);
+        
+        /*
+        MST-Prim(G,w) 
+        For each u ∈ G.V 
+            do u.key ← ∞ 
+                  u.π ← nil 
+        r.key ← 0 
+        Q ← G.V 
+        While Q ≠ ∅ 
+            Do u ← Extract-Min(Q) 
+                  For each v ∈ Adj[u] 
+                      Do if v ∈ Q and w(u,v) < v.key 
+                            Then v.π ← u 
+                                      v.key ← w(u,v)
+                                      */
+        ArrayList<Integer> parentsNum = new ArrayList<Integer>();
+        ArrayList<Region> parents = new ArrayList<Region>();
+
+        for(Region i : problem.getRegions()) {
+        	parentsNum.add(null);
+        	parents.add(null);
         }
         
         while(!heap.isEmpty()) {
-        	Region u = heap.poll();
+        	Region u = heap.remove();
+        	for(Region v : u.getNeighbors()) {
+        		int pos = u.getNeighbors().lastIndexOf(v);
+        		int weightOfUtoV = u.getWeights().get(pos);
+        		if(heap.contains(v) && weightOfUtoV < v.getMinDist()) {
+        			//parents.set(u, u);
+        		}
+        	}
+        	
+        	
+        	
+        	
+        }
+        
+        int MSTlength = 0;
+        
+      
+        
+        
+        for(int i=1; i < parents.size();i++) {
+        	
+        	if(parents.get(i) != null) {
+        		MSTlength += parents.get(i).getMinDist();
+        	}
+
+        	
+        	
+        	
+        	 
+        	
         	
         }
         
@@ -46,8 +100,22 @@ public class Program2 {
 
 
         
-        return -1;
+        return MSTlength;
     }
+    
+    
+    public Region findNodeByName(int name, Problem problem) {
+    	
+    	for(Region i : problem.getRegions()) {
+    		if(i.getName() == name) {
+    			return i;
+    		}
+    	}
+    	
+    	return null;
+    }
+    		
+    	
 
     
 
@@ -69,6 +137,34 @@ public class Program2 {
         
         return 0;
     }
+    
+    
+    /*
+     *         	for(Region v : u.getNeighbors()) {
+        		int indexOfVinUAdj = u.getNeighbors().lastIndexOf(v);
+        		int weightOfUtoV = u.getWeights().get(indexOfVinUAdj);
+        		int vKey = v.getMinDist();
+        		if(heap.contains(v) && vKey > weightOfUtoV) {
+        			
+        			Region vTemp = heap.remove();
+        			vTemp.setMinDist(weightOfUtoV);
+
+        			
+        			vTemp.getMST_Neighbors().add(u);
+        			vTemp.getMST_Weights().add(weightOfUtoV);
+        			
+        			parentsNum.set(v.getIndex(),u.getName());
+        			parents.set(v.getIndex(), u);
+        			
+        			heap.add(vTemp);
+        		}
+        	}
+        	
+        	
+        	
+        	int x =5;
+        	
+     */
 
     
 }
