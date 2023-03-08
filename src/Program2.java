@@ -8,6 +8,11 @@
 // Include this file in your final submission
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
@@ -26,18 +31,11 @@ public class Program2 {
     //For each u ∈ G.V 
         problem.getRegions().get(0).setMinDist(0);
         Queue<Region> heap = new PriorityQueue<>(problem.getRegions());
+        
+        Map<Region,Region> mstChildToParent = new HashMap<Region,Region>(); //<Child, Parent>
 
         // TODO: implement this function
         
-//        for(Region u : problem.getRegions()) {
-//        	u.resetMinDist();
-//        	u.setIndex(0);
-//        	
-//        }
-//        
-//        Region r = heap.remove();
-//        r.setMinDist(0);
-//        heap.add(r);
         
         /*
         MST-Prim(G,w) 
@@ -53,13 +51,7 @@ public class Program2 {
                             Then v.π ← u 
                                       v.key ← w(u,v)
                                       */
-        ArrayList<Integer> parentsNum = new ArrayList<Integer>();
-        ArrayList<Region> parents = new ArrayList<Region>();
 
-        for(Region i : problem.getRegions()) {
-        	parentsNum.add(null);
-        	parents.add(null);
-        }
         
         while(!heap.isEmpty()) {
         	Region u = heap.remove();
@@ -67,7 +59,12 @@ public class Program2 {
         		int pos = u.getNeighbors().lastIndexOf(v);
         		int weightOfUtoV = u.getWeights().get(pos);
         		if(heap.contains(v) && weightOfUtoV < v.getMinDist()) {
-        			//parents.set(u, u);
+        			heap.remove(v);
+        			
+        			v.setMinDist(weightOfUtoV);
+
+        			mstChildToParent.putIfAbsent(u, v);
+        			heap.add(v);
         		}
         	}
         	
@@ -78,22 +75,32 @@ public class Program2 {
         
         int MSTlength = 0;
         
-      
         
-        
-        for(int i=1; i < parents.size();i++) {
-        	
-        	if(parents.get(i) != null) {
-        		MSTlength += parents.get(i).getMinDist();
-        	}
+        for(Region child : mstChildToParent.keySet()) {
+        	Region parent = mstChildToParent.get(child);
+//        	parent.getMST_Neighbors().add(child);
+//        	parent.getMST_Weights().add(child.getMinDist());
+//        	child.getMST_Neighbors().add(parent);
+//        	child.getMST_Weights().add(parent.getMinDist());
 
         	
-        	
-        	
-        	 
+
+        	parent.setMST_NeighborAndWeight(child, child.getMinDist());
+        	child.setMST_NeighborAndWeight(parent, parent.getMinDist());
         	
         	
         }
+        
+        for(Region r : problem.getRegions()) {
+        	
+        	
+        	MSTlength += r.getMinDist();
+        }
+        
+      
+        
+        
+
         
         
 
@@ -103,17 +110,6 @@ public class Program2 {
         return MSTlength;
     }
     
-    
-    public Region findNodeByName(int name, Problem problem) {
-    	
-    	for(Region i : problem.getRegions()) {
-    		if(i.getName() == name) {
-    			return i;
-    		}
-    	}
-    	
-    	return null;
-    }
     		
     	
 
@@ -129,42 +125,63 @@ public class Program2 {
         
         // Call findMinimumLength in your code to get MST. In gradescope, we will provide the mst in each regions mst_neighbors nad mst_weights list
         int length = findMinimumLength(problem);
+        int diameter = 0;
+        
+
+        
+        
+        
+        //arraylist of layernumbers 
+        
+        
+        
+        for(Region startNode : problem.getRegions()) {
+			Queue<Region> queue = new LinkedList<Region>();
+	        boolean[] visited = new boolean[problem.getRegions().size()];
+	        boolean[] pushed = new boolean[problem.getRegions().size()];
+	        
+	        ArrayList<Integer> layerNum = new ArrayList<Integer>(Collections.nCopies(problem.getRegions().size(), 0));
+	        
+	        visited[startNode.getIndex()] = true;
+	        
+			queue.add(startNode);
+			
+			while(!queue.isEmpty()) {
+				Region node = queue.poll();
+				for(Region neighbor : node.getMST_Neighbors()) {
+					if(!visited[neighbor.getIndex()]) {
+						visited[neighbor.getIndex()] = true;
+						layerNum.set(neighbor.getIndex(), layerNum.get(node.getIndex()) + 1);
+						queue.add(neighbor);
+					}
+				}
+			}
+			
+			int val = max(layerNum);
+			if(val > diameter) {
+				diameter = val;
+			}
+			
+			int x = 5;
+        }
         
         // TODO: Implement this function
 
 
 
         
-        return 0;
+        return diameter;
     }
     
+    public int max(ArrayList<Integer> val) {
+    	int maxLayer=0;
+		for(Integer i : val) {
+			if(i > maxLayer) {
+				maxLayer = i;
+			}
+		}
+		return maxLayer;
+    }
     
-    /*
-     *         	for(Region v : u.getNeighbors()) {
-        		int indexOfVinUAdj = u.getNeighbors().lastIndexOf(v);
-        		int weightOfUtoV = u.getWeights().get(indexOfVinUAdj);
-        		int vKey = v.getMinDist();
-        		if(heap.contains(v) && vKey > weightOfUtoV) {
-        			
-        			Region vTemp = heap.remove();
-        			vTemp.setMinDist(weightOfUtoV);
-
-        			
-        			vTemp.getMST_Neighbors().add(u);
-        			vTemp.getMST_Weights().add(weightOfUtoV);
-        			
-        			parentsNum.set(v.getIndex(),u.getName());
-        			parents.set(v.getIndex(), u);
-        			
-        			heap.add(vTemp);
-        		}
-        	}
-        	
-        	
-        	
-        	int x =5;
-        	
-     */
-
     
 }
